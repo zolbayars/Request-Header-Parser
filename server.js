@@ -38,6 +38,25 @@ app.route('/')
 		  res.sendFile(process.cwd() + '/views/index.html');
     })
 
+app.get("/whoami", function (request, response) {
+  
+  var header = request.headers; 
+  var ip = header['x-forwarded-for'].split(",")[0];
+  var language = header['accept-language'].split(",")[0];
+  
+  var regExp = /\(([^)]+)\)/; //get strings inside a parenthesis
+  var matches = regExp.exec(header['user-agent']);
+  var osName = matches[0].slice(1); 
+  var os = osName.slice(0, -1);
+  
+  var resultObj = {
+    "ipaddress":  ip,
+    "language":  language,
+    "software":  os,
+  } 
+  response.send(resultObj);
+});
+
 // Respond not found to all the wrong routes
 app.use(function(req, res, next){
   res.status(404);
